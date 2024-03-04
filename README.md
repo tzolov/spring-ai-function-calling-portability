@@ -9,23 +9,23 @@ Users can ask questions about current status for certain payment transactions an
 For example, let's consider a sample dataset and a function that retrieves the payment status given a transaction:
 
 ```java
-	record Transaction(String id) {
-	}
+record Transaction(String id) {
+}
 
-	record Status(String name) {
-	}
+record Status(String name) {
+}
 
-	private static final Map<Transaction, Status> DATASET =
-		Map.of(
-			new Transaction("001"), new Status("pending"),
-			new Transaction("002"), new Status("approved"),
-			new Transaction("003"), new Status("rejected"));
+private static final Map<Transaction, Status> DATASET =
+	Map.of(
+		new Transaction("001"), new Status("pending"),
+		new Transaction("002"), new Status("approved"),
+		new Transaction("003"), new Status("rejected"));
 
-	@Bean
-	@Description("Get the status of a payment transaction")
-	public Function<Transaction, Status> paymentStatus() {
-		return transaction -> DATASET.get(transaction);
-	}
+@Bean
+@Description("Get the status of a payment transaction")
+public Function<Transaction, Status> paymentStatus() {
+	return transaction -> DATASET.get(transaction);
+}
 ```
 
 Function is registered as `@Bean` and uses the `@Description` annotation to define function description.
@@ -87,26 +87,26 @@ spring.ai.azure.openai.chat.options.functions=paymentStatus
 Now you can test them with the same prompt:
 
 ```java
-	@Bean
-	ApplicationRunner applicationRunner(
-			MistralAiChatClient mistralAi,
-			VertexAiGeminiChatClient vertexAiGemini,
-			OpenAiChatClient openAi,
-			AzureOpenAiChatClient azureOpenAi) {
+@Bean
+ApplicationRunner applicationRunner(
+		MistralAiChatClient mistralAi,
+		VertexAiGeminiChatClient vertexAiGemini,
+		OpenAiChatClient openAi,
+		AzureOpenAiChatClient azureOpenAi) {
 
-		return args -> {
+	return args -> {
 
-			String prompt = "What is the status of my payment transaction 003?";
+		String prompt = "What is the status of my payment transaction 003?";
 
-			System.out.println("MISTRAL_AI: " + mistralAi.call(prompt));
+		System.out.println("MISTRAL_AI: " + mistralAi.call(prompt));
 
-			System.out.println("VERTEX_AI_GEMINI: " + vertexAiGemini.call(prompt));
+		System.out.println("VERTEX_AI_GEMINI: " + vertexAiGemini.call(prompt));
 
-			System.out.println("OPEN_AI: " + openAi.call(prompt));
+		System.out.println("OPEN_AI: " + openAi.call(prompt));
 
-			System.out.println("AZURE_OPEN_AI: " + azureOpenAi.call(prompt));
-		};
-	}
+		System.out.println("AZURE_OPEN_AI: " + azureOpenAi.call(prompt));
+	};
+}
 ```
 
 The output would look something like:
@@ -146,7 +146,6 @@ AZURE_OPEN_AI: The status of your payment transactions is as follows:
 ```
 
 As you can see, currently Mistral AI doesn't support parallel function calling.
-
 
 ## Related [Spring AI](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/) documentation:
 
