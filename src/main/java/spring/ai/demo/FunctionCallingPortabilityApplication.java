@@ -45,7 +45,7 @@ public class FunctionCallingPortabilityApplication {
 
 		return args -> {
 
-			String prompt = "What is the status of my payment transactions 003 and 001?";
+			String prompt = "What is the status of my payment transaction 003?";
 
 			System.out.println("MISTRAL_AI: " + mistralAi.call(prompt));
 
