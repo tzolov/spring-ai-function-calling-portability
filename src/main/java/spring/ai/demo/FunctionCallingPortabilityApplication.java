@@ -3,7 +3,11 @@ package spring.ai.demo;
 import java.util.Map;
 import java.util.function.Function;
 
+import reactor.core.publisher.Flux;
+
 import org.springframework.ai.azure.openai.AzureOpenAiChatClient;
+import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.mistralai.MistralAiChatClient;
 import org.springframework.ai.openai.OpenAiChatClient;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatClient;
@@ -47,13 +51,20 @@ public class FunctionCallingPortabilityApplication {
 
 			String prompt = "What is the status of my payment transaction 003?";
 
+			System.out.println("OPEN_AI: " + openAi.call(prompt));
+
+			System.out.println("AZURE_OPEN_AI: " + azureOpenAi.call(prompt));
+
 			System.out.println("MISTRAL_AI: " + mistralAi.call(prompt));
 
 			System.out.println("VERTEX_AI_GEMINI: " + vertexAiGemini.call(prompt));
 
-			System.out.println("OPEN_AI: " + openAi.call(prompt));
+			// Currently, SpringAI supports streaming Function calls only for VertexAI Gemini.
+			Flux<ChatResponse> geminiStream = vertexAiGemini.stream(new Prompt(prompt));
+			geminiStream.collectList().block().stream().findFirst().ifPresent(resp -> {
+				System.out.println("VERTEX_AI_GEMINI (Streaming): " + resp.getResult().getOutput().getContent());
+			});
 
-			System.out.println("AZURE_OPEN_AI: " + azureOpenAi.call(prompt));
 		};
 	}
 
