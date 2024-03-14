@@ -49,7 +49,7 @@ public class FunctionCallingPortabilityApplication {
 
 		return args -> {
 
-			String prompt = "What is the status of my payment transaction 003?";
+			String prompt = "What is the status of my payment transaction 003 and transaction 001?";
 
 			System.out.println("OPEN_AI: " + openAi.call(prompt));
 
