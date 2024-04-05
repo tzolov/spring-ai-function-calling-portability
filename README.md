@@ -56,6 +56,10 @@ Lets add the boot starters for 4 AI Models that support function calling:
 	<groupId>org.springframework.ai</groupId>
 	<artifactId>spring-ai-azure-openai-spring-boot-starter</artifactId>
 </dependency>
+<dependency>
+	<groupId>org.springframework.ai</groupId>
+	<artifactId>spring-ai-anthropic-spring-boot-starter</artifactId>
+</dependency>
 ```
 
 and configure them in `application.properties`:
