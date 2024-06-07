@@ -4,21 +4,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.anthropic.AnthropicChatClient;
-import org.springframework.ai.azure.openai.AzureOpenAiChatClient;
-import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.mistralai.MistralAiChatClient;
-import org.springframework.ai.openai.OpenAiChatClient;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatClient;
+import org.springframework.ai.mistralai.MistralAiChatModel;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Description;
+
+import reactor.core.publisher.Flux;
 
 @SpringBootApplication
 public class FunctionCallingPortabilityApplication {
@@ -44,50 +44,47 @@ public class FunctionCallingPortabilityApplication {
 	// are used to register the paymentStatus function with the AI Models
 	@Bean
 	@Description("Get the status of a payment transaction")
-	// public Function<List<Transaction>, List<Status>> paymentStatus() {
-	// 	return transactions -> transactions.stream().map(t -> DATASET.get(t)).toList();
-	// }
 	public Function<Transaction, Status> paymentStatus() {
 		return transaction -> DATASET.get(transaction);
 	}
 
-
-	// @Bean
-	// @Description("Get the list statuses of a list of payment transactions")
-	// public Function<Transactions, Statuses> paymentStatus() {
-	// 	return transactions -> {
-	// 		return new Statuses(transactions.transactions().stream().map(t -> DATASET.get(t)).toList());
-	// 	};
-	// }
-
 	@Bean
 	ApplicationRunner applicationRunner(
-			MistralAiChatClient mistralAi,
-			VertexAiGeminiChatClient vertexAiGemini,
-			OpenAiChatClient openAi,
-			AzureOpenAiChatClient azureOpenAi,
-			AnthropicChatClient anthropicChatClient) {
+			MistralAiChatModel mistralAi,
+			VertexAiGeminiChatModel vertexAiGemini,
+			OpenAiChatModel openAi,
+			AzureOpenAiChatModel azureOpenAi,
+			AnthropicChatModel anthropicChatClient) {
 
 		return args -> {
 
-			// String prompt = "What is the status of my payment transaction 003 and transaction 001?";
-			String prompt = "What is the statuses of the following payment transactions 003, 001, 002?";
+			// String prompt = "What is the status of my payment transaction 003 and
+			// transaction 001?";
+			String prompt = "What is the statuses of the following payment transactions 003, 001, 002? Use multiple funciotn calls if needed.";
 
-			System.out.println("OPEN_AI: " + openAi.call(prompt));
+			System.out.println("\n OPEN_AI: " + openAi.call(prompt) + "\n");
 
-			System.out.println("AZURE_OPEN_AI: " + azureOpenAi.call(prompt));
+			System.out.println("\n OPEN AI (Streaming): " + content(openAi.stream(new Prompt(prompt))) + "\n");
 
-			System.out.println("MISTRAL_AI: " + mistralAi.call(prompt));
+			System.out.println("\n AZURE OPEN AI: " + azureOpenAi.call(prompt) + "\n");
 
-			System.out.println("VERTEX_AI_GEMINI: " + vertexAiGemini.call(prompt));
+			System.out.println("\n AZURE OPEN AI (Streaming): " + content(azureOpenAi.stream(new Prompt(prompt))) + "\n");
 
-			Flux<ChatResponse> geminiStream = vertexAiGemini.stream(new Prompt(prompt));
-			geminiStream.collectList().block().stream().findFirst().ifPresent(resp -> {
-				System.out.println("VERTEX_AI_GEMINI (Streaming): " + resp.getResult().getOutput().getContent());
-			});
+			System.out.println("\n MISTRAL AI: " + mistralAi.call(prompt) + "\n");
 
-			System.out.println("ANTHROPIC: " + anthropicChatClient.call(prompt));
+			System.out.println("\n MISTRAL AI (Streaming): " + content(mistralAi.stream(new Prompt(prompt))) + "\n");
+
+			System.out.println("\n VERTEX_AI_GEMINI: " + vertexAiGemini.call(prompt) + "\n");
+			
+			System.out.println("\n VERTEX_AI_GEMINI (Streaming): " + content(vertexAiGemini.stream(new Prompt(prompt))) + "\n");
+
+			System.out.println("\n ANTHROPIC: " + anthropicChatClient.call(prompt) + "\n");
 		};
+	}
+
+	private static String content(Flux<ChatResponse> stream) {
+		return stream.collectList().block().stream().findFirst().map(resp -> resp.getResult().getOutput().getContent())
+				.orElse("");
 	}
 
 	public static void main(String[] args) {

@@ -93,10 +93,11 @@ Now you can test them with the same prompt:
 ```java
 @Bean
 ApplicationRunner applicationRunner(
-		MistralAiChatClient mistralAi,
-		VertexAiGeminiChatClient vertexAiGemini,
-		OpenAiChatClient openAi,
-		AzureOpenAiChatClient azureOpenAi) {
+		MistralAiChatModel mistralAi,
+		VertexAiGeminiChatModel vertexAiGemini,
+		OpenAiChatModel openAi,
+		AzureOpenAiChatModel azureOpenAi,
+		AnthropicChatModel anthropicChatClient) {
 
 	return args -> {
 
@@ -109,6 +110,8 @@ ApplicationRunner applicationRunner(
 		System.out.println("OPEN_AI: " + openAi.call(prompt));
 
 		System.out.println("AZURE_OPEN_AI: " + azureOpenAi.call(prompt));
+
+		System.out.println("ANTHROPIC: " + anthropicChatClient.call(prompt));
 	};
 }
 ```
@@ -151,15 +154,17 @@ AZURE_OPEN_AI: The status of your payment transactions is as follows:
 
 As you can see, currently Mistral AI doesn't support parallel function calling.
 
-## Related [Spring AI](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/) documentation:
+## Related [Spring AI](https://docs.spring.io/spring-ai/reference) documentation:
 
-* [Spring AI OpenAI](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/openai-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/functions/openai-chat-functions.html)
+* [Spring AI OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/api/chat/functions/openai-chat-functions.html)
 
-* [Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/azure-openai-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/functions/azure-open-ai-chat-functions.html)
+* [Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/api/chat/functions/azure-open-ai-chat-functions.html)
 
-* [Spring AI Google VertexAI Gemini](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/vertexai-gemini-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/functions/vertexai-gemini-chat-functions.html)
+* [Spring AI Google VertexAI Gemini](https://docs.spring.io/spring-ai/reference/api/chat/vertexai-gemini-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/api/chat/functions/vertexai-gemini-chat-functions.html)
 
-* [Spring AI Mistral AI](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/mistralai-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/0.8-SNAPSHOT/api/clients/functions/mistralai-chat-functions.html)
+* [Spring AI Mistral AI](https://docs.spring.io/spring-ai/reference/api/chat/mistralai-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/api/chat/functions/mistralai-chat-functions.html)
+
+* [Spring AI Anthropic AI](https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html) and [Function Calling](https://docs.spring.io/spring-ai/reference/api/chat/functions/anthropic-chat-functions.html)
 
 ## Native (GraalVM) Build
 
