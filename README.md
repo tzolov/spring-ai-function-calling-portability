@@ -7,7 +7,7 @@ For example the status of your recent payment transactions.
 Users can ask questions about current status for certain payment transactions and use function calling to answer them.
 
 For example, let's consider a sample dataset and a function that retrieves the payment status given a transaction:
-
+   
 ```java
 record Transaction(String id) {
 }
